@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoリスト</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="my-4">ToDoリスト</h1>
+        <button id="openModal" class="btn btn-primary mb-3" data-toggle="modal" data-target="#createModal">作成</button>
+        <div id="createModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">新しいToDoを作成</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createForm" method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-success">追加</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>タイトル</th>
+                    <th>内容</th>
+                    <th>優先度</th>
+                    <th>状態</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in todo_items %}
+                <tr class="{% if item.completed %}completed{% endif %}">
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.priority }}</td>
+                    <td>
+                        {% if item.completed %}
+                        <span class="text-success">完了</span>
+                        {% else %}
+                        <span class="text-danger">未完了</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_todo_item' item.pk %}" class="btn btn-warning btn-sm">編集</a>
+                        {% if item.completed %}
+                        <a href="{% url 'incomplete_todo_item' item.pk %}" class="btn btn-info btn-sm">未完了に戻す</a>
+                        {% else %}
+                        <a href="{% url 'complete_todo_item' item.pk %}" class="btn btn-success btn-sm">完了</a>
+                        {% endif %}
+                        <a href="{% url 'delete_todo_item' item.pk %}" class="btn btn-danger btn-sm">削除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#openModal').click(function () {
+                $('#createModal').modal('show');
+            });
+
+            $('.close').click(function () {
+                $('#createModal').modal('hide');
+            });
+
+            $(window).click(function (event) {
+                if ($(event.target).hasClass('modal')) {
+                    $('#createModal').modal('hide');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

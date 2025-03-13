@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アカウント作成</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header text-center">
+                        <h2>アカウント作成</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_username">ユーザー名</label>
+                                <input type="text" name="username" class="form-control" id="id_username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_password1">パスワード</label>
+                                <input type="password" name="password1" class="form-control" id="id_password1" required>
+                                <div id="password-strength" class="mt-2"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_password2">パスワード確認</label>
+                                <input type="password" name="password2" class="form-control" id="id_password2" required>
+                                <div id="password-match" class="mt-2"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">作成</button>
+                        </form>
+                    </div>
+                </div>
+                <p class="text-center mt-3">既にアカウントをお持ちですか？ <a href="{% url 'login' %}">ログイン</a></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const password1 = document.getElementById('id_password1');
+            const password2 = document.getElementById('id_password2');
+            const passwordStrength = document.getElementById('password-strength');
+            const passwordMatch = document.getElementById('password-match');
+
+            password1.addEventListener('input', function () {
+                const strength = getPasswordStrength(password1.value);
+                passwordStrength.textContent = `パスワード強度: ${strength}`;
+                passwordStrength.style.color = getStrengthColor(strength);
+            });
+
+            password2.addEventListener('input', function () {
+                if (password1.value === password2.value) {
+                    passwordMatch.textContent = 'パスワードが一致しています';
+                    passwordMatch.className = 'text-success';
+                } else {
+                    passwordMatch.textContent = 'パスワードが一致していません';
+                    passwordMatch.className = 'text-danger';
+                }
+            });
+
+            function getPasswordStrength(password) {
+                let strength = '弱';
+                if (password.length >= 8) {
+                    strength = '中';
+                }
+                if (password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+                    strength = '強';
+                }
+                return strength;
+            }
+
+            function getStrengthColor(strength) {
+                switch (strength) {
+                    case '弱':
+                        return 'red';
+                    case '中':
+                        return 'orange';
+                    case '強':
+                        return 'green';
+                    default:
+                        return 'black';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

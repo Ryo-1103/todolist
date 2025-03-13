@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoリスト - 編集</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="my-4">ToDoリスト - 編集</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-group">
+                <label for="created_at">作成日時:</label>
+                <input type="text" class="form-control" id="created_at" value="{{ item.created_at }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="updated_at">最終編集日時:</label>
+                <input type="text" class="form-control" id="updated_at" value="{{ item.updated_at }}" readonly>
+            </div>
+            <button type="submit" class="btn btn-primary">保存</button>
+        </form>
+        <a href="{% url 'todo_list' %}" class="btn btn-secondary mt-3">戻る</a>
+    </div>
+</body>
+
+</html>
